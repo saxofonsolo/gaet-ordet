@@ -1,7 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const DICTIONARY = (
-    replace: { [key: string]: string | number } = {},
-) => {
+export const DICTIONARY = (replace: Record<string, string | number> = {}) => {
     const replaceRegex = new RegExp(
         "{{" + Object.keys(replace).join("}}|{{") + "}}",
         "g",

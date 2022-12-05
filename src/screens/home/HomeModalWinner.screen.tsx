@@ -37,7 +37,7 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
             targetWord,
             wordLength,
             difficulty,
-            guesses: WORD_GUESS_COUNT - (currentGuess + 1),
+            guesses: `${currentGuess + 1} / ${WORD_GUESS_COUNT}`,
         });
         Animated.stagger(100, [
             Animated.timing(translateX1.current, {
@@ -54,7 +54,8 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
                 useNativeDriver: true,
             }),
         ]).start();
-    }, [currentGuess, difficulty, targetWord, wordLength]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <View

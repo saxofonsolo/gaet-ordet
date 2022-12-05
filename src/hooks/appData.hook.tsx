@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import auth from "@react-native-firebase/auth";
 import { APP_IDENTIFIER } from "../constants/app.constants";
 import pkg from "../../package.json";
+import { logEvent } from "../helpers/logEvent.helper";
 import { Difficulty, WordLength } from "./game.hook";
 
 const STORAGE_NAMES = {
@@ -11,12 +13,12 @@ const STORAGE_NAMES = {
 interface Settings {
     difficulty?: Difficulty;
     wordLength?: WordLength;
-    totalScore?: number;
 }
 
 interface AppDataHook {
     appIsReady: boolean;
     appVersion: string;
+    userId: string;
     settings: {
         get: Settings;
         set: (settings: Settings) => Promise<void>;
@@ -27,6 +29,7 @@ interface AppDataHook {
 const AppDataContext = React.createContext<AppDataHook>({
     appIsReady: false,
     appVersion: "",
+    userId: "",
     settings: {
         get: {},
         set: () => Promise.reject(),
@@ -39,6 +42,7 @@ type Props = {
 };
 
 export const AppDataProvider = ({ children }: Props): JSX.Element => {
+    const [userId, setUserId] = useState<string>("");
     const [appIsReady, setAppIsReady] = useState(false);
     const [settings, setSettings] = useState<Settings>();
 
@@ -91,16 +95,44 @@ export const AppDataProvider = ({ children }: Props): JSX.Element => {
     }, [settings, getSettings]);
 
     useEffect(() => {
-        if (!appIsReady && settings) {
+        if (!appIsReady && settings && userId) {
             setAppIsReady(true);
         }
-    }, [appIsReady, settings]);
+    }, [appIsReady, settings, userId]);
+
+    useEffect(() => {
+        auth()
+            .signInAnonymously()
+            .then(({ user }) => {
+                setUserId(user.uid);
+            })
+            .catch((error) => {
+                if (error.code === "auth/operation-not-allowed") {
+                    logEvent("error", {
+                        message: "Enable anonymous in your firebase console.",
+                    });
+                } else {
+                    logEvent("error", {
+                        message:
+                            error.name +
+                            ": " +
+                            error.message +
+                            " (" +
+                            error.code +
+                            ")",
+                    });
+                }
+
+                console.error(error);
+            });
+    }, []);
 
     return (
         <AppDataContext.Provider
             value={{
                 appIsReady,
                 appVersion: pkg.version,
+                userId,
                 settings: {
                     get: settings || ({} as Settings),
                     set: storeSettings,

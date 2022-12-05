@@ -1,29 +1,19 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Pressable, useColorScheme, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SCREEN_NAMES } from "../../constants/screenNames.constants";
 import CoinSvg from "../../graphics/coin.svg";
 import { DICTIONARY } from "../../constants/dictionary.constants";
-import { useScore } from "../../hooks/score.hook";
 import { Paragraph } from "../elements/Paragraph.component";
 import { formatNumber } from "../../helpers/formatNumber.helper";
-import { useGame } from "../../hooks/game.hook";
 
-export const GameHeader = (): JSX.Element => {
-    const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { totalScore, score } = useScore();
-    const { currentGuess } = useGame();
+interface GameHeaderProps {
+    score: number;
+    totalScore: number;
+    currentGuess: number;
+    onGiveUp: () => void;
+}
+
+export const GameHeader: React.FC<GameHeaderProps> = (props) => {
     const isDarkMode = useColorScheme() === "dark";
-
-    const showGiveUpModal = useCallback(
-        () =>
-            navigation.navigate({
-                name: SCREEN_NAMES.home.modalGiveUp,
-                params: {},
-            }),
-        [navigation],
-    );
 
     return (
         <View
@@ -42,20 +32,22 @@ export const GameHeader = (): JSX.Element => {
                 }}
             >
                 <CoinSvg width={20} height={20} />
-                <Paragraph bold style={{ marginLeft: 10 }}>
-                    {formatNumber(totalScore)}
-                    {score > 0 && "  +  " + formatNumber(score)}
-                </Paragraph>
+                {props.totalScore >= 0 && (
+                    <Paragraph bold style={{ marginLeft: 10 }}>
+                        {formatNumber(props.totalScore)}
+                        {props.score > 0 && "  +  " + formatNumber(props.score)}
+                    </Paragraph>
+                )}
             </View>
             <View>
                 <Pressable
-                    disabled={currentGuess <= 1}
-                    onPress={showGiveUpModal}
+                    disabled={props.currentGuess <= 1}
+                    onPress={props.onGiveUp}
                     accessibilityRole="button"
                     style={{
                         padding: 10,
                         paddingHorizontal: 15,
-                        opacity: currentGuess <= 1 ? 0 : 1,
+                        opacity: props.currentGuess <= 1 ? 0 : 1,
                     }}
                 >
                     <Paragraph bold>

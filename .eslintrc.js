@@ -23,6 +23,14 @@ module.exports = {
             version: "detect",
         },
     },
+    overrides: [
+        {
+            files: "*.biblo.tsx",
+            rules: {
+                "import/no-default-export": 0,
+            },
+        },
+    ],
     rules: {
         "@typescript-eslint/ban-ts-comment": ["off"],
         "@typescript-eslint/explicit-function-return-type": ["off"],

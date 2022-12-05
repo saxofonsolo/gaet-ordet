@@ -1,14 +1,14 @@
 import React from "react";
 import { View } from "react-native";
 import { useGame, WordLength } from "../../hooks/game.hook";
-import { LetterState } from "../../interfaces/LetterState.interface";
+import { KeyState } from "../../interfaces/LetterState.interface";
 import { GuessLetter } from "./GuessLetter.component";
 
 interface GuessWordProps {
     word?: string;
     length: WordLength;
     isCurrent?: boolean;
-    letterStates?: LetterState[];
+    letterStates?: KeyState[];
     letterSize: number;
 }
 

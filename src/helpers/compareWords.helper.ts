@@ -1,13 +1,10 @@
-import { LetterState } from "../interfaces/LetterState.interface";
+import { KeyState } from "../interfaces/LetterState.interface";
 
-export const compareWords = (
-    subject: string,
-    target: string,
-): LetterState[] => {
+export const compareWords = (subject: string, target: string): KeyState[] => {
     const subjectLetters = subject.split("");
     const targetLetters = target.split("");
     const targetLettersClone = [...targetLetters];
-    const returnArray: LetterState[] = [];
+    const returnArray: KeyState[] = [];
 
     // Check for correct letters
     for (
@@ -16,7 +13,7 @@ export const compareWords = (
         i++
     ) {
         const letterIsCorrect = subjectLetters[i] === targetLetters[i];
-        const letterState: LetterState = {
+        const letterState: KeyState = {
             isClose: false,
             isCorrect: letterIsCorrect,
             isRedundant: false,

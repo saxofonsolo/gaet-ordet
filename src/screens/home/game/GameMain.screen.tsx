@@ -6,7 +6,7 @@ import { GuessWord } from "../../../components/guesses/GuessWord.component";
 import { Difficulty, useGame } from "../../../hooks/game.hook";
 import { WORD_GUESS_COUNT } from "../../../constants/game.constants";
 
-export const GameMainScreen = (): JSX.Element => {
+export const GameMainScreen: React.FC = () => {
     const toast = useToast();
     const {
         difficulty,

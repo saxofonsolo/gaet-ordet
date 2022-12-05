@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Pressable, useColorScheme, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -8,11 +8,24 @@ import BurgerSvg from "../../graphics/burger.svg";
 import { SCREEN_NAMES } from "../../constants/screenNames.constants";
 import { GameHeader } from "../../components/header/GameHeader.component";
 import { Paragraph } from "../../components/elements/Paragraph.component";
+import { useScore } from "../../hooks/score.hook";
+import { useGame } from "../../hooks/game.hook";
 import { GameMainScreen } from "./game/GameMain.screen";
 
 export const HomeMainScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const isDarkMode = useColorScheme() === "dark";
+    const { totalScore, score } = useScore();
+    const { currentGuess } = useGame();
+
+    const showGiveUpModal = useCallback(
+        () =>
+            navigation.navigate({
+                name: SCREEN_NAMES.home.modalGiveUp,
+                params: {},
+            }),
+        [navigation],
+    );
 
     return (
         <View
@@ -69,7 +82,12 @@ export const HomeMainScreen: React.FC = () => {
                     </Pressable>
                 </View>
             </View>
-            <GameHeader />
+            <GameHeader
+                totalScore={totalScore}
+                score={score}
+                currentGuess={currentGuess}
+                onGiveUp={showGiveUpModal}
+            />
             <View style={{ flex: 1 }}>
                 <GameMainScreen />
             </View>

@@ -20,7 +20,7 @@ export const HomeModalMenuScreen = (): JSX.Element => {
     const [newDifficulty, setNewDifficulty] = useState<Difficulty>(difficulty);
     const [newWordLength, setNewWordLength] = useState<WordLength>(wordLength);
     const isDarkMode = useColorScheme() === "dark";
-    const emojiScale = useRef(new Animated.Value(1)).current;
+    const emojiScale = useRef(new Animated.Value(1));
     const firstRender = useRef(true);
 
     const startNewGame = useCallback(
@@ -32,8 +32,8 @@ export const HomeModalMenuScreen = (): JSX.Element => {
 
     useEffect(() => {
         if (!firstRender.current) {
-            emojiScale.setValue(1.15);
-            Animated.spring(emojiScale, {
+            emojiScale.current.setValue(1.15);
+            Animated.spring(emojiScale.current, {
                 toValue: 1,
                 friction: 5,
                 tension: 100,
@@ -42,7 +42,7 @@ export const HomeModalMenuScreen = (): JSX.Element => {
         } else {
             firstRender.current = false;
         }
-    }, [emojiScale, newDifficulty, newWordLength]);
+    }, [newDifficulty, newWordLength]);
 
     return (
         <View
@@ -89,9 +89,9 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                     <Animated.View
                         style={{
                             transform: [
-                                { scale: emojiScale },
+                                { scale: emojiScale.current },
                                 {
-                                    rotateZ: emojiScale.interpolate({
+                                    rotateZ: emojiScale.current.interpolate({
                                         inputRange: [1, 5],
                                         outputRange: ["0deg", "-360deg"],
                                     }),
@@ -135,9 +135,12 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                         {DICTIONARY().game.new}
                     </Paragraph>
 
-                    <View style={{ marginVertical: 20 }}>
+                    <View style={{ marginBottom: 20 }}>
                         <Slider
-                            style={{ marginHorizontal: 15 }}
+                            style={{
+                                marginHorizontal: 15,
+                                paddingVertical: 25,
+                            }}
                             minimumValue={WordLength.Five}
                             maximumValue={WordLength.Seven}
                             step={1}
@@ -159,21 +162,20 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                             maximumTrackTintColor={
                                 isDarkMode ? COLORS.WHITE : "#777"
                             }
-                            tapToSeek={true}
+                            tapToSeek
                             onValueChange={(value) => setNewWordLength(value)}
                             onSlidingComplete={(value) =>
                                 setNewWordLength(value)
                             }
                         />
 
-                        <View style={{ flexDirection: "row" }}>
-                            <Pressable
-                                accessibilityRole="button"
-                                onPressIn={() =>
-                                    setNewWordLength(WordLength.Five)
-                                }
+                        <View
+                            style={{ flexDirection: "row" }}
+                            pointerEvents="none"
+                        >
+                            <View
                                 style={{
-                                    paddingVertical: 10,
+                                    marginTop: -15,
                                     width: "33.333%",
                                 }}
                             >
@@ -184,15 +186,11 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                                             .difficulties.nCharacters
                                     }
                                 </Paragraph>
-                            </Pressable>
+                            </View>
 
-                            <Pressable
-                                accessibilityRole="button"
-                                onPressIn={() =>
-                                    setNewWordLength(WordLength.Six)
-                                }
+                            <View
                                 style={{
-                                    paddingVertical: 10,
+                                    marginTop: -15,
                                     width: "33.333%",
                                     alignItems: "center",
                                 }}
@@ -203,15 +201,11 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                                             .difficulties.nCharacters
                                     }
                                 </Paragraph>
-                            </Pressable>
+                            </View>
 
-                            <Pressable
-                                accessibilityRole="button"
-                                onPressIn={() =>
-                                    setNewWordLength(WordLength.Seven)
-                                }
+                            <View
                                 style={{
-                                    paddingVertical: 10,
+                                    marginTop: -15,
                                     width: "33.333%",
                                     alignItems: "flex-end",
                                 }}
@@ -223,13 +217,16 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                                     }
                                     {"  "}
                                 </Paragraph>
-                            </Pressable>
+                            </View>
                         </View>
                     </View>
 
-                    <View style={{ marginVertical: 20 }}>
+                    <View style={{ marginBottom: 20 }}>
                         <Slider
-                            style={{ marginHorizontal: 15 }}
+                            style={{
+                                marginHorizontal: 15,
+                                paddingVertical: 25,
+                            }}
                             minimumValue={Difficulty.Normal}
                             maximumValue={Difficulty.Expert}
                             step={1}
@@ -258,29 +255,24 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                             }
                         />
 
-                        <View style={{ flexDirection: "row" }}>
-                            <Pressable
-                                accessibilityRole="button"
-                                onPressIn={() =>
-                                    setNewDifficulty(Difficulty.Normal)
-                                }
+                        <View
+                            style={{ flexDirection: "row", marginBottom: 10 }}
+                            pointerEvents="none"
+                        >
+                            <View
                                 style={{
-                                    paddingVertical: 10,
+                                    marginTop: -15,
                                     width: "33.333%",
                                 }}
                             >
                                 <Paragraph bold size={14}>
                                     {DICTIONARY().difficulties.normal}
                                 </Paragraph>
-                            </Pressable>
+                            </View>
 
-                            <Pressable
-                                accessibilityRole="button"
-                                onPressIn={() =>
-                                    setNewDifficulty(Difficulty.Hard)
-                                }
+                            <View
                                 style={{
-                                    paddingVertical: 10,
+                                    marginTop: -15,
                                     width: "33.333%",
                                     alignItems: "center",
                                 }}
@@ -288,15 +280,11 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                                 <Paragraph bold size={14}>
                                     {DICTIONARY().difficulties.hard}
                                 </Paragraph>
-                            </Pressable>
+                            </View>
 
-                            <Pressable
-                                accessibilityRole="button"
-                                onPressIn={() =>
-                                    setNewDifficulty(Difficulty.Expert)
-                                }
+                            <View
                                 style={{
-                                    paddingVertical: 10,
+                                    marginTop: -15,
                                     width: "33.333%",
                                     alignItems: "flex-end",
                                 }}
@@ -304,7 +292,7 @@ export const HomeModalMenuScreen = (): JSX.Element => {
                                 <Paragraph bold size={14}>
                                     {DICTIONARY().difficulties.expert}
                                 </Paragraph>
-                            </Pressable>
+                            </View>
                         </View>
                     </View>
 

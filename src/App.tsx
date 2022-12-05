@@ -10,13 +10,11 @@ import SystemNavigationBar from "react-native-system-navigation-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ToastProvider } from "react-native-toast-notifications";
-import auth from "@react-native-firebase/auth";
 import { COLORS } from "./constants/colors.constants";
 import { HomeRootScreen } from "./screens/home/HomeRoot.screen";
 import { SCREEN_NAMES } from "./constants/screenNames.constants";
 import { FONTS } from "./constants/fonts.constants";
 import { AppDataProvider } from "./hooks/appData.hook";
-import { logEvent } from "./helpers/logEvent.helper";
 import { ComponentsRootScreen } from "./screens/components/ComponentsRoot.screen";
 
 if (
@@ -33,27 +31,6 @@ export const App = (): JSX.Element => {
 
     useEffect(() => {
         void SystemNavigationBar.stickyImmersive();
-        auth()
-            .signInAnonymously()
-            .catch((error) => {
-                if (error.code === "auth/operation-not-allowed") {
-                    logEvent("error", {
-                        message: "Enable anonymous in your firebase console.",
-                    });
-                } else {
-                    logEvent("error", {
-                        message:
-                            error.name +
-                            ": " +
-                            error.message +
-                            " (" +
-                            error.code +
-                            ")",
-                    });
-                }
-
-                console.error(error);
-            });
     }, []);
 
     return (

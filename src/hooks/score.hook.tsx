@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { LetterState } from "../interfaces/LetterState.interface";
+import firestore from "@react-native-firebase/firestore";
+import { KeyState } from "../interfaces/LetterState.interface";
 import { SCORE, TIME_BONUS_HALF_LIFE } from "../constants/score.constants";
 import { Difficulty } from "./game.hook";
 import { useAppData } from "./appData.hook";
@@ -7,10 +8,10 @@ import { useAppData } from "./appData.hook";
 interface ScoreHook {
     score: number;
     totalScore: number;
-    updateScore: (difficulty: Difficulty, letterStates: LetterState[]) => void;
+    updateScore: (difficulty: Difficulty, letterStates: KeyState[]) => void;
     resetScore: () => void;
     addBonus: (bonus: number) => void;
-    addScoreToTotal: (bonus?: number) => void;
+    addScoreToTotal: (bonus: number, winsInARow: number) => void;
     getTimeBonus: (difficulty: Difficulty, ms: number) => number;
     getSpotsLeftBonus: (difficulty: Difficulty, spotsLeft: number) => number;
     getWinsInARowBonus: (difficulty: Difficulty, winsInARow: number) => number;
@@ -33,15 +34,14 @@ type Props = {
 };
 
 export const ScoreProvider = ({ children }: Props): JSX.Element => {
-    const { settings } = useAppData();
+    const { userId } = useAppData();
     const [score, setScore] = useState(0);
-    const [totalScore, setTotalScore] = useState(settings.get.totalScore || 0);
-    const difficultyMultipliers = useRef(
-        Object.values(SCORE.difficulty),
-    ).current;
+    const [totalScore, setTotalScore] = useState(-1);
+    const difficultyMultipliers = useRef(Object.values(SCORE.difficulty));
+    const userDoc = firestore().collection("users").doc(userId);
 
     const updateScore = useCallback(
-        (difficulty: Difficulty, letterStates: LetterState[]) => {
+        (difficulty: Difficulty, letterStates: KeyState[]) => {
             const newScore = letterStates.reduce(
                 (accumulated, { isClose, isCorrect }) =>
                     accumulated +
@@ -50,13 +50,13 @@ export const ScoreProvider = ({ children }: Props): JSX.Element => {
                         : isClose
                         ? SCORE.letters.close
                         : SCORE.letters.redundant) *
-                        difficultyMultipliers[difficulty],
+                        difficultyMultipliers.current[difficulty],
                 score,
             );
 
             setScore(newScore);
         },
-        [score, difficultyMultipliers],
+        [score],
     );
 
     const resetScore = useCallback(() => setScore(0), []);
@@ -71,9 +71,9 @@ export const ScoreProvider = ({ children }: Props): JSX.Element => {
             Math.round(
                 SCORE.bonuses.time *
                     0.5 ** (ms / TIME_BONUS_HALF_LIFE) *
-                    difficultyMultipliers[difficulty],
+                    difficultyMultipliers.current[difficulty],
             ),
-        [difficultyMultipliers],
+        [],
     );
 
     const getSpotsLeftBonus = useCallback(
@@ -81,9 +81,9 @@ export const ScoreProvider = ({ children }: Props): JSX.Element => {
             Math.round(
                 spotsLeft *
                     SCORE.bonuses.remaining *
-                    difficultyMultipliers[difficulty],
+                    difficultyMultipliers.current[difficulty],
             ),
-        [difficultyMultipliers],
+        [],
     );
 
     const getWinsInARowBonus = useCallback(
@@ -93,24 +93,53 @@ export const ScoreProvider = ({ children }: Props): JSX.Element => {
                     SCORE.bonuses.winsInARow,
                     SCORE.bonuses.winsInARow * 2 ** ((winsInARow - 1) / 9) -
                         SCORE.bonuses.winsInARow,
-                ) * difficultyMultipliers[difficulty],
+                ) * difficultyMultipliers.current[difficulty],
             ),
-        [difficultyMultipliers],
+        [],
     );
 
     const addScoreToTotal = useCallback(
-        (bonus = 0) => {
-            setTotalScore(totalScore + score + bonus);
+        (bonus = 0, winsInARow = 0) => {
+            const newTotalScore = totalScore + score + bonus;
+            setTotalScore(newTotalScore);
             setScore(0);
+            userDoc
+                .get()
+                .then((doc) => {
+                    const currentState = doc.data();
+                    userDoc
+                        .set(
+                            {
+                                totalScore: Math.max(
+                                    currentState?.totalScore || 0,
+                                    newTotalScore,
+                                ),
+                                currentStreak: winsInARow,
+                                maxStreak: Math.max(
+                                    currentState?.maxStreak || 0,
+                                    winsInARow,
+                                ),
+                                lastActivity:
+                                    firestore.FieldValue.serverTimestamp(),
+                            },
+                            { merge: true },
+                        )
+                        .catch((err) => console.log(111, err));
+                })
+                .catch((err) => console.log(222, err));
         },
-        [totalScore, score],
+        [totalScore, score, userDoc],
     );
 
     useEffect(() => {
-        if (totalScore && totalScore !== settings.get.totalScore) {
-            void settings.set({ totalScore });
-        }
-    }, [settings, totalScore]);
+        userDoc
+            .get()
+            .then((doc) => {
+                const { totalScore: retrievedScore } = doc.data() as any;
+                setTotalScore(retrievedScore || 0);
+            })
+            .catch(() => setTotalScore(0));
+    }, [userDoc]);
 
     return (
         <ScoreContext.Provider

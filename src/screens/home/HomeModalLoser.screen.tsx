@@ -29,13 +29,13 @@ export const HomeModalLoserScreen = (): JSX.Element => {
         difficulty,
     } = useGame();
     const skullsArray = useRef(new Array(50).fill("")).current;
-    const translateY1 = useRef(new Animated.Value(0)).current;
-    const translateY2 = useRef(new Animated.Value(0)).current;
-    const opacity1 = translateY1.interpolate({
+    const translateY1 = useRef(new Animated.Value(0));
+    const translateY2 = useRef(new Animated.Value(0));
+    const opacity1 = translateY1.current.interpolate({
         inputRange: [0, 1400, 1500],
         outputRange: [0.99, 0.99, 0],
     });
-    const opacity2 = translateY2.interpolate({
+    const opacity2 = translateY2.current.interpolate({
         inputRange: [0, 1900, 2000],
         outputRange: [0.99, 0.99, 0],
     });
@@ -57,17 +57,17 @@ export const HomeModalLoserScreen = (): JSX.Element => {
             targetWord,
             wordLength,
             difficulty,
-            guesses: WORD_GUESS_COUNT - (currentGuess + 1),
+            guesses: `${currentGuess + 1} / ${WORD_GUESS_COUNT}`,
         });
         Animated.stagger(100, [
-            Animated.timing(translateY1, {
+            Animated.timing(translateY1.current, {
                 toValue: 1500,
                 delay: 200,
                 duration: 3000,
                 easing: Easing.out(Easing.quad),
                 useNativeDriver: true,
             }),
-            Animated.timing(translateY2, {
+            Animated.timing(translateY2.current, {
                 toValue: 2000,
                 delay: 200,
                 duration: 5000,
@@ -75,15 +75,8 @@ export const HomeModalLoserScreen = (): JSX.Element => {
                 useNativeDriver: true,
             }),
         ]).start();
-    }, [
-        currentGuess,
-        difficulty,
-        gameState,
-        targetWord,
-        translateY1,
-        translateY2,
-        wordLength,
-    ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <View
@@ -107,7 +100,9 @@ export const HomeModalLoserScreen = (): JSX.Element => {
                             },
                             {
                                 translateY:
-                                    index % 2 ? translateY2 : translateY1,
+                                    index % 2
+                                        ? translateY2.current
+                                        : translateY1.current,
                             },
                         ],
                         opacity: index % 2 ? opacity2 : opacity1,

@@ -8,13 +8,13 @@ import {
     View,
 } from "react-native";
 import { COLORS } from "../../../constants/colors.constants";
-import { Difficulty, useGame } from "../../../hooks/game.hook";
 import { FONTS } from "../../../constants/fonts.constants";
 
 interface SoftKeyboardKeyProps {
     value: string;
     onPress: (value: string) => void;
     disabled?: boolean;
+    forbidden?: boolean;
     isClose?: boolean;
     isCorrect?: boolean;
     isRedundant?: boolean;
@@ -25,16 +25,14 @@ export const SoftKeyboardKey = React.memo(
         value,
         onPress,
         disabled,
+        forbidden,
         isClose,
         isCorrect,
         isRedundant,
     }: SoftKeyboardKeyProps): JSX.Element => {
-        const [previousClose, setPreviousClose] = useState(false);
         const [backgroundColor, setBackgroundColor] = useState("#0000");
         const [borderColor, setBorderColor] = useState("#0000");
         const [textColor, setTextColor] = useState("#0000");
-        const { difficulty, previousCloseLetters, guesses, currentGuess } =
-            useGame();
         const isDarkMode = useColorScheme() === "dark";
         const keyWidth = Math.min(
             65,
@@ -70,25 +68,6 @@ export const SoftKeyboardKey = React.memo(
             ]).start();
         }, []);
 
-        useEffect(() => {
-            if (difficulty >= Difficulty.Expert && previousCloseLetters) {
-                const guessLetterIndex = guesses[currentGuess]?.length || 0;
-
-                if (previousCloseLetters[guessLetterIndex]?.includes(value)) {
-                    setPreviousClose(true);
-                } else if (previousClose) {
-                    setPreviousClose(false);
-                }
-            }
-        }, [
-            value,
-            difficulty,
-            previousCloseLetters,
-            guesses,
-            currentGuess,
-            previousClose,
-        ]);
-
         const setNewColors = useCallback(() => {
             setBackgroundColor(
                 isDarkMode
@@ -121,7 +100,7 @@ export const SoftKeyboardKey = React.memo(
                     ? COLORS.CYAN_DARK
                     : isClose
                     ? COLORS.ORANGE_DARK
-                    : isRedundant
+                    : isRedundant && !forbidden
                     ? "#DDD"
                     : "#CCC",
             );
@@ -131,11 +110,11 @@ export const SoftKeyboardKey = React.memo(
                     ? isRedundant
                         ? "#555"
                         : "#DDD"
-                    : isRedundant
+                    : isRedundant && !forbidden
                     ? "#999"
                     : "#222",
             );
-        }, [isClose, isCorrect, isRedundant, isDarkMode]);
+        }, [isClose, isCorrect, isRedundant, isDarkMode, forbidden]);
 
         useEffect(() => {
             if (isClose || isCorrect || isRedundant) {
@@ -173,12 +152,8 @@ export const SoftKeyboardKey = React.memo(
                         onPress={() => onPress(value)}
                         onPressIn={handlePressIn}
                         onPressOut={handlePressOut}
-                        disabled={
-                            disabled ||
-                            previousClose ||
-                            (difficulty >= Difficulty.Expert && isRedundant)
-                        }
-                        style={{ padding: 2, opacity: previousClose ? 0.5 : 1 }}
+                        disabled={disabled || forbidden}
+                        style={{ padding: 2, opacity: forbidden ? 0.5 : 1 }}
                     >
                         <Animated.View
                             style={[
@@ -189,7 +164,7 @@ export const SoftKeyboardKey = React.memo(
                                     borderWidth: 1,
                                     borderBottomWidth: 3,
                                     borderColor,
-                                    backgroundColor: previousClose
+                                    backgroundColor: forbidden
                                         ? "transparent"
                                         : backgroundColor,
                                 },

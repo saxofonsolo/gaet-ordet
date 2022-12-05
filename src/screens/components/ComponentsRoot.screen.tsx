@@ -30,6 +30,17 @@ export const ComponentsRootScreen: React.FC = () => {
                     params: { file },
                 });
             }}
+            indexOptions={{
+                headerTitle: "",
+                headerStyle: {
+                    backgroundColor: "white",
+                },
+            }}
+            readerOptions={{
+                headerTagsHidden: true,
+                headerPathHidden: true,
+                wrapperStyle: { backgroundColor: "white" },
+            }}
         >
             <Stack.Navigator>
                 <Stack.Screen

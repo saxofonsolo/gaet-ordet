@@ -61,7 +61,10 @@ export const ScoreCalculation = (): JSX.Element => {
     const total = totalScoreBefore + subtotal;
 
     useEffect(() => {
-        addScoreToTotal(timeBonus + spotsLeftBonus + winsInARowBonus);
+        addScoreToTotal(
+            timeBonus + spotsLeftBonus + winsInARowBonus,
+            winsInARow,
+        );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

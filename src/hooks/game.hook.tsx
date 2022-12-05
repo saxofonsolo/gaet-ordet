@@ -8,14 +8,15 @@ import React, {
 } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import firestore from "@react-native-firebase/firestore";
 import { getRandomFromArray } from "../helpers/getRandomFromArray.helper";
 import { FIVE_LETTER_WORDS } from "../constants/words/fiveLetterWords.constant";
 import { SIX_LETTER_WORDS } from "../constants/words/sixLetterWords.constant";
 import { SEVEN_LETTER_WORDS } from "../constants/words/sevenLetterWords.constant";
-import { LetterState } from "../interfaces/LetterState.interface";
+import { KeyState } from "../interfaces/LetterState.interface";
 import { compareWords } from "../helpers/compareWords.helper";
 import {
-    DEFAULT_LETTER_STATE,
+    DEFAULT_KEY_STATE,
     WORD_GUESS_COUNT,
 } from "../constants/game.constants";
 import { SCREEN_NAMES } from "../constants/screenNames.constants";
@@ -57,8 +58,8 @@ interface GameHook {
     difficulty: Difficulty;
     targetWord: string;
     wordLength: WordLength;
-    getLetterState: (letter: string) => LetterState;
-    guessStates: LetterState[][];
+    getKeyState: (key: string) => KeyState;
+    guessStates: KeyState[][];
     currentGuess: number;
     guesses: string[];
     guessedLetters: string[];
@@ -84,7 +85,7 @@ const GameContext = React.createContext<GameHook>({
     difficulty: Difficulty.Normal,
     targetWord: "",
     wordLength: WordLength.Five,
-    getLetterState: () => DEFAULT_LETTER_STATE,
+    getKeyState: () => DEFAULT_KEY_STATE,
     guessStates: [],
     currentGuess: 0,
     guesses: [],
@@ -109,7 +110,7 @@ type Props = {
 
 export const GameProvider = ({ children }: Props): JSX.Element => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { settings } = useAppData();
+    const { settings, userId } = useAppData();
     const [difficulty, setDifficulty] = useState<Difficulty>(
         settings.get.difficulty || Difficulty.Normal,
     );
@@ -121,7 +122,7 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
     );
     const [targetWord, setTargetWord] = useState("");
     const [previousWords, setPreviousWords] = useState<string[]>([]);
-    const [guessStates, setGuessStates] = useState<LetterState[][]>([]);
+    const [guessStates, setGuessStates] = useState<KeyState[][]>([]);
     const [currentGuess, setCurrentGuess] = useState(0);
     const [guesses, setGuesses] = useState<string[]>([]);
     const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
@@ -131,7 +132,7 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
         string[][]
     >([]);
     const [allLetterStates, setAllLetterStates] = useState<
-        Record<string, LetterState>
+        Record<string, KeyState>
     >({});
     const [editLetterIndex, setEditLetterIndex] = useState(-1);
     const { updateScore, resetScore } = useScore();
@@ -141,6 +142,7 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
             : length === WordLength.Six
             ? SIX_LETTER_WORDS
             : FIVE_LETTER_WORDS;
+    const userDoc = firestore().collection("users").doc(userId);
 
     const newGame = useCallback(
         (gameOptions?: GameOptions) =>
@@ -176,6 +178,18 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
                     const newPreviousWords = [targetWord];
                     newWord = getRandomFromArray(wordList, newPreviousWords);
                     setPreviousWords(newPreviousWords);
+                }
+
+                if (difficulty !== newDifficulty && currentGuess > 0) {
+                    setWinsInARow(0);
+                    userDoc.set(
+                        {
+                            currentStreak: 0,
+                            lastActivity:
+                                firestore.FieldValue.serverTimestamp(),
+                        },
+                        { merge: true },
+                    );
                 }
 
                 console.log(newWord);
@@ -223,6 +237,8 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
             previousWords,
             resetScore,
             settings,
+            currentGuess,
+            userDoc,
         ],
     );
 
@@ -418,11 +434,43 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
         setGuesses(newGuesses);
     }, [guesses, currentGuess, editLetterIndex]);
 
-    const getLetterState = useCallback(
-        (letter: string): LetterState => {
-            return allLetterStates[letter] || DEFAULT_LETTER_STATE;
+    const getKeyState = useCallback(
+        (key: string): KeyState => {
+            if (allLetterStates[key] || difficulty >= Difficulty.Expert) {
+                const currentWordLength = guesses[currentGuess]?.length || 0;
+                const disabled =
+                    gameState !== GameState.Ongoing ||
+                    (key === "BS" && currentWordLength === 0) ||
+                    (key === "OK" && currentWordLength < wordLength) ||
+                    (key.length === 1 &&
+                        currentWordLength === wordLength &&
+                        editLetterIndex === -1);
+                const guessLetterIndex = guesses[currentGuess]?.length || 0;
+                const forbidden =
+                    key !== "BS" &&
+                    key !== "OK" &&
+                    difficulty >= Difficulty.Expert &&
+                    (allLetterStates[key]?.isRedundant ||
+                        previousCloseLetters[guessLetterIndex]?.includes(key) ||
+                        (guessedLetters[guessLetterIndex]
+                            ? guessedLetters[guessLetterIndex] !== key
+                            : false));
+
+                return { ...allLetterStates[key], disabled, forbidden };
+            }
+            return DEFAULT_KEY_STATE;
         },
-        [allLetterStates],
+        [
+            allLetterStates,
+            currentGuess,
+            difficulty,
+            editLetterIndex,
+            gameState,
+            guessedLetters,
+            guesses,
+            previousCloseLetters,
+            wordLength,
+        ],
     );
 
     useEffect(() => {
@@ -440,7 +488,7 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
                 difficulty,
                 targetWord,
                 wordLength,
-                getLetterState,
+                getKeyState,
                 guessStates,
                 currentGuess,
                 guesses,

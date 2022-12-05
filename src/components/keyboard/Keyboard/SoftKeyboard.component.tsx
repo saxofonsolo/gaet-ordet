@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { GameState, useGame } from "../../../hooks/game.hook";
+import { useGame } from "../../../hooks/game.hook";
 import { SoftKeyboardKey } from "../KeyboardKey/SoftKeyboardKey.component";
 
 interface SoftKeyboardProps {
@@ -9,20 +9,12 @@ interface SoftKeyboardProps {
 
 export const SoftKeyboard = React.memo(
     ({ onPress }: SoftKeyboardProps): JSX.Element => {
-        const {
-            gameState,
-            wordLength,
-            guesses,
-            currentGuess,
-            editLetterIndex,
-            getLetterState,
-        } = useGame();
+        const { getKeyState } = useGame();
         const keys = [
             ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "Å"],
             ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Æ", "Ø"],
             ["BS", "Z", "X", "C", "V", "B", "N", "M", "OK"],
         ];
-        const currentWordLength = guesses[currentGuess]?.length || 0;
 
         return (
             <View
@@ -34,16 +26,13 @@ export const SoftKeyboard = React.memo(
                 {keys.map((keyRow, index) => (
                     <View key={index} style={{ flexDirection: "row" }}>
                         {keyRow.map((key) => {
-                            const { isClose, isCorrect, isRedundant } =
-                                getLetterState(key);
-                            const disabled =
-                                gameState !== GameState.Ongoing ||
-                                (key === "BS" && currentWordLength === 0) ||
-                                (key === "OK" &&
-                                    currentWordLength < wordLength) ||
-                                (key.length === 1 &&
-                                    currentWordLength === wordLength &&
-                                    editLetterIndex === -1);
+                            const {
+                                isClose,
+                                isCorrect,
+                                isRedundant,
+                                disabled,
+                                forbidden,
+                            } = getKeyState(key);
 
                             return (
                                 <SoftKeyboardKey
@@ -51,6 +40,7 @@ export const SoftKeyboard = React.memo(
                                     value={key}
                                     onPress={onPress}
                                     disabled={disabled}
+                                    forbidden={forbidden}
                                     isClose={isClose}
                                     isCorrect={isCorrect}
                                     isRedundant={isRedundant}
