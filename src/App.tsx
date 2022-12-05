@@ -17,6 +17,7 @@ import { SCREEN_NAMES } from "./constants/screenNames.constants";
 import { FONTS } from "./constants/fonts.constants";
 import { AppDataProvider } from "./hooks/appData.hook";
 import { logEvent } from "./helpers/logEvent.helper";
+import { ComponentsRootScreen } from "./screens/components/ComponentsRoot.screen";
 
 if (
     Platform.OS === "android" &&
@@ -82,8 +83,13 @@ export const App = (): JSX.Element => {
                         <NavigationContainer>
                             <Stack.Navigator>
                                 <Stack.Screen
-                                    name={SCREEN_NAMES.HOME.ROOT}
+                                    name={SCREEN_NAMES.home.root}
                                     component={HomeRootScreen}
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name={SCREEN_NAMES.componentLibrary.root}
+                                    component={ComponentsRootScreen}
                                     options={{ headerShown: false }}
                                 />
                             </Stack.Navigator>

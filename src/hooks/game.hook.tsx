@@ -258,7 +258,7 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
     const showLoserModal = useCallback(
         (): void =>
             navigation.navigate({
-                name: SCREEN_NAMES.HOME.MODAL_LOSER,
+                name: SCREEN_NAMES.home.modalLoser,
                 params: {},
             }),
         [navigation],
@@ -267,7 +267,7 @@ export const GameProvider = ({ children }: Props): JSX.Element => {
     const showWinnerModal = useCallback(
         (): void =>
             navigation.navigate({
-                name: SCREEN_NAMES.HOME.MODAL_WINNER,
+                name: SCREEN_NAMES.home.modalWinner,
                 params: {},
             }),
         [navigation],

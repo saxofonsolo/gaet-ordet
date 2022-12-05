@@ -2,7 +2,8 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strictBindCallApply": true
   },
   "include": [
     "./**/*.js",

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "666266211360",
+    "project_id": "wordledk",
+    "storage_bucket": "wordledk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666266211360:android:ceda23dabc5dfd4868d845",
+        "android_client_info": {
+          "package_name": "com.wordledansk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666266211360-ieb8bq2m45udbel2t5fau90nia07re22.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVbUhesJ0BihL5PPNnsJX0zSAViFZxY7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666266211360-ieb8bq2m45udbel2t5fau90nia07re22.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-9921155687005886~2346698837"
+    }
+  ],
+  "configuration_version": "1"
+}

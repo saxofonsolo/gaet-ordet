@@ -19,7 +19,7 @@ export const GameHeader = (): JSX.Element => {
     const showGiveUpModal = useCallback(
         () =>
             navigation.navigate({
-                name: SCREEN_NAMES.HOME.MODAL_GIVE_UP,
+                name: SCREEN_NAMES.home.modalGiveUp,
                 params: {},
             }),
         [navigation],

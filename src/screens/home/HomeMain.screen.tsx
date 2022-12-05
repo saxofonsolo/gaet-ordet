@@ -10,7 +10,7 @@ import { GameHeader } from "../../components/header/GameHeader.component";
 import { Paragraph } from "../../components/elements/Paragraph.component";
 import { GameMainScreen } from "./game/GameMain.screen";
 
-export const HomeMainScreen = (): JSX.Element => {
+export const HomeMainScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const isDarkMode = useColorScheme() === "dark";
 
@@ -39,7 +39,17 @@ export const HomeMainScreen = (): JSX.Element => {
                     <Paragraph black size={20}>
                         GÆT
                     </Paragraph>
-                    <DannebrogSvg height="40" width="60" />
+                    <Pressable
+                        accessibilityRole="button"
+                        onPress={() =>
+                            navigation.navigate({
+                                name: SCREEN_NAMES.componentLibrary.root,
+                                params: {},
+                            })
+                        }
+                    >
+                        <DannebrogSvg height="40" width="60" />
+                    </Pressable>
                     <Paragraph black size={20}>
                         ORDET
                     </Paragraph>
@@ -49,7 +59,7 @@ export const HomeMainScreen = (): JSX.Element => {
                         accessibilityRole="button"
                         onPress={() =>
                             navigation.navigate({
-                                name: SCREEN_NAMES.HOME.MODAL_MENU,
+                                name: SCREEN_NAMES.home.modalMenu,
                                 params: {},
                             })
                         }

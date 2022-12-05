@@ -7,70 +7,68 @@ import {
     useColorScheme,
     View,
 } from "react-native";
-import { COLORS } from "../../constants/colors.constants";
-import { Difficulty, useGame } from "../../hooks/game.hook";
-import { FONTS } from "../../constants/fonts.constants";
+import { COLORS } from "../../../constants/colors.constants";
+import { Difficulty, useGame } from "../../../hooks/game.hook";
+import { FONTS } from "../../../constants/fonts.constants";
 
 interface SoftKeyboardKeyProps {
     value: string;
     onPress: (value: string) => void;
     disabled?: boolean;
+    isClose?: boolean;
+    isCorrect?: boolean;
+    isRedundant?: boolean;
 }
 
 export const SoftKeyboardKey = React.memo(
-    ({ value, onPress, disabled }: SoftKeyboardKeyProps): JSX.Element => {
+    ({
+        value,
+        onPress,
+        disabled,
+        isClose,
+        isCorrect,
+        isRedundant,
+    }: SoftKeyboardKeyProps): JSX.Element => {
         const [previousClose, setPreviousClose] = useState(false);
         const [backgroundColor, setBackgroundColor] = useState("#0000");
         const [borderColor, setBorderColor] = useState("#0000");
         const [textColor, setTextColor] = useState("#0000");
-        const {
-            targetWord,
-            difficulty,
-            getLetterState,
-            previousCloseLetters,
-            guesses,
-            wordLength,
-            currentGuess,
-            editLetterIndex,
-        } = useGame();
+        const { difficulty, previousCloseLetters, guesses, currentGuess } =
+            useGame();
         const isDarkMode = useColorScheme() === "dark";
         const keyWidth = Math.min(
             65,
             (Dimensions.get("window").width - 4) / 11,
         );
-        const rotateX = useRef(new Animated.Value(0)).current;
-        const scaleX = useRef(new Animated.Value(1)).current;
-        const scaleY = useRef(new Animated.Value(1)).current;
-
-        const { isClose, isCorrect, isRedundant } = getLetterState(value);
-
-        const currentWordLength = guesses[currentGuess]?.length || 0;
+        const rotateX = useRef(new Animated.Value(0));
+        const scaleX = useRef(new Animated.Value(1));
+        const scaleY = useRef(new Animated.Value(1));
 
         const handlePressIn = useCallback(() => {
-            rotateX.setValue(20);
-            scaleX.setValue(0.9);
-            scaleY.setValue(0.9);
-        }, [rotateX, scaleX, scaleY]);
+            rotateX.current.setValue(20);
+            scaleX.current.setValue(0.9);
+            scaleY.current.setValue(0.9);
+        }, []);
 
         const handlePressOut = useCallback(() => {
             Animated.parallel([
-                Animated.timing(rotateX, {
+                Animated.timing(rotateX.current, {
                     toValue: 0,
                     duration: 100,
                     useNativeDriver: true,
                 }),
-                Animated.timing(scaleX, {
+                Animated.timing(scaleX.current, {
                     toValue: 1,
                     duration: 100,
                     useNativeDriver: true,
                 }),
-                Animated.timing(scaleY, {
+                Animated.timing(scaleY.current, {
                     toValue: 1,
                     duration: 100,
                     useNativeDriver: true,
                 }),
             ]).start();
-        }, [rotateX, scaleX, scaleY]);
+        }, []);
 
         useEffect(() => {
             if (difficulty >= Difficulty.Expert && previousCloseLetters) {
@@ -89,7 +87,6 @@ export const SoftKeyboardKey = React.memo(
             guesses,
             currentGuess,
             previousClose,
-            targetWord,
         ]);
 
         const setNewColors = useCallback(() => {
@@ -142,13 +139,13 @@ export const SoftKeyboardKey = React.memo(
 
         useEffect(() => {
             if (isClose || isCorrect || isRedundant) {
-                Animated.timing(scaleX, {
+                Animated.timing(scaleX.current, {
                     toValue: 0,
                     duration: 100,
                     useNativeDriver: true,
                 }).start(() => {
                     setNewColors();
-                    Animated.timing(scaleX, {
+                    Animated.timing(scaleX.current, {
                         toValue: 1,
                         duration: 100,
                         useNativeDriver: true,
@@ -157,7 +154,7 @@ export const SoftKeyboardKey = React.memo(
             } else {
                 setNewColors();
             }
-        }, [isClose, isCorrect, isRedundant, isDarkMode, scaleX, setNewColors]);
+        }, [isClose, isCorrect, isRedundant, isDarkMode, setNewColors]);
 
         return (
             <View
@@ -179,12 +176,7 @@ export const SoftKeyboardKey = React.memo(
                         disabled={
                             disabled ||
                             previousClose ||
-                            (difficulty >= Difficulty.Expert && isRedundant) ||
-                            (value.length === 1 &&
-                                currentWordLength === wordLength &&
-                                editLetterIndex === -1) ||
-                            (value === "BS" && currentWordLength === 0) ||
-                            (value === "OK" && currentWordLength < wordLength)
+                            (difficulty >= Difficulty.Expert && isRedundant)
                         }
                         style={{ padding: 2, opacity: previousClose ? 0.5 : 1 }}
                     >
@@ -205,13 +197,17 @@ export const SoftKeyboardKey = React.memo(
                                     transform: [
                                         { perspective: 100 },
                                         {
-                                            rotateX: rotateX.interpolate({
-                                                inputRange: [0, 360],
-                                                outputRange: ["0deg", "360deg"],
-                                            }),
+                                            rotateX:
+                                                rotateX.current.interpolate({
+                                                    inputRange: [0, 360],
+                                                    outputRange: [
+                                                        "0deg",
+                                                        "360deg",
+                                                    ],
+                                                }),
                                         },
-                                        { scaleX },
-                                        { scaleY },
+                                        { scaleX: scaleX.current },
+                                        { scaleY: scaleY.current },
                                     ],
                                 },
                             ]}

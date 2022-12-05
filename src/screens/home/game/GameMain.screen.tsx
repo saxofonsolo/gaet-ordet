@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { LayoutRectangle, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import { SoftKeyboard } from "../../../components/keyboard/SoftKeyboard.component";
+import { SoftKeyboard } from "../../../components/keyboard/Keyboard/SoftKeyboard.component";
 import { GuessWord } from "../../../components/guesses/GuessWord.component";
 import { Difficulty, useGame } from "../../../hooks/game.hook";
 import { WORD_GUESS_COUNT } from "../../../constants/game.constants";

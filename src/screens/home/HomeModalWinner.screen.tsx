@@ -16,13 +16,13 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
     const { targetWord, currentGuess, newGame, wordLength, difficulty } =
         useGame();
     const flagsArray = useRef(new Array(50).fill("")).current;
-    const translateX1 = useRef(new Animated.Value(0)).current;
-    const translateX2 = useRef(new Animated.Value(0)).current;
-    const opacity1 = translateX1.interpolate({
+    const translateX1 = useRef(new Animated.Value(0));
+    const translateX2 = useRef(new Animated.Value(0));
+    const opacity1 = translateX1.current.interpolate({
         inputRange: [0, 900, 1000],
         outputRange: [1, 1, 0],
     });
-    const opacity2 = translateX2.interpolate({
+    const opacity2 = translateX2.current.interpolate({
         inputRange: [0, 1100, 1200],
         outputRange: [1, 1, 0],
     });
@@ -40,28 +40,21 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
             guesses: WORD_GUESS_COUNT - (currentGuess + 1),
         });
         Animated.stagger(100, [
-            Animated.timing(translateX1, {
+            Animated.timing(translateX1.current, {
                 toValue: 1000,
                 delay: 200,
                 duration: 3000,
                 easing: Easing.out(Easing.quad),
                 useNativeDriver: true,
             }),
-            Animated.timing(translateX2, {
+            Animated.timing(translateX2.current, {
                 toValue: 1200,
                 duration: 5000,
                 easing: Easing.out(Easing.quad),
                 useNativeDriver: true,
             }),
         ]).start();
-    }, [
-        currentGuess,
-        difficulty,
-        targetWord,
-        translateX1,
-        translateX2,
-        wordLength,
-    ]);
+    }, [currentGuess, difficulty, targetWord, wordLength]);
 
     return (
         <View
@@ -87,7 +80,9 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
                             },
                             {
                                 translateX:
-                                    index % 2 ? translateX2 : translateX1,
+                                    index % 2
+                                        ? translateX2.current
+                                        : translateX1.current,
                             },
                         ],
                         opacity: index % 2 ? opacity2 : opacity1,

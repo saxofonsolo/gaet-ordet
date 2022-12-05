@@ -19,7 +19,7 @@ export const HomeRootScreen = (): JSX.Element => {
             <GameProvider>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                     <Stack.Screen
-                        name={SCREEN_NAMES.HOME.MAIN}
+                        name={SCREEN_NAMES.home.main}
                         component={HomeMainScreen}
                     />
                     <Stack.Group
@@ -32,19 +32,19 @@ export const HomeRootScreen = (): JSX.Element => {
                         }}
                     >
                         <Stack.Screen
-                            name={SCREEN_NAMES.HOME.MODAL_LOSER}
+                            name={SCREEN_NAMES.home.modalLoser}
                             component={HomeModalLoserScreen}
                         />
                         <Stack.Screen
-                            name={SCREEN_NAMES.HOME.MODAL_WINNER}
+                            name={SCREEN_NAMES.home.modalWinner}
                             component={HomeModalWinnerScreen}
                         />
                         <Stack.Screen
-                            name={SCREEN_NAMES.HOME.MODAL_MENU}
+                            name={SCREEN_NAMES.home.modalMenu}
                             component={HomeModalMenuScreen}
                         />
                         <Stack.Screen
-                            name={SCREEN_NAMES.HOME.MODAL_GIVE_UP}
+                            name={SCREEN_NAMES.home.modalGiveUp}
                             component={HomeModalGiveUpScreen}
                         />
                     </Stack.Group>

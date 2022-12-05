@@ -19,7 +19,7 @@ export const HomeModalGiveUpScreen = (): JSX.Element => {
     }, [navigation]);
 
     const onPressYes = useCallback(() => {
-        giveUp().then(() => navigation.replace(SCREEN_NAMES.HOME.MODAL_LOSER));
+        giveUp().then(() => navigation.replace(SCREEN_NAMES.home.modalLoser));
     }, [navigation, giveUp]);
 
     return (
