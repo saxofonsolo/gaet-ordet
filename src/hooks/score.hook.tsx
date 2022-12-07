@@ -34,7 +34,7 @@ type Props = {
 };
 
 export const ScoreProvider = ({ children }: Props): JSX.Element => {
-    const { userId } = useAppData();
+    const { userId, settings } = useAppData();
     const [score, setScore] = useState(0);
     const [totalScore, setTotalScore] = useState(-1);
     const difficultyMultipliers = useRef(Object.values(SCORE.difficulty));
@@ -136,9 +136,15 @@ export const ScoreProvider = ({ children }: Props): JSX.Element => {
             .get()
             .then((doc) => {
                 const { totalScore: retrievedScore } = doc.data() as any;
-                setTotalScore(retrievedScore || 0);
+                // @ts-ignore
+                setTotalScore(retrievedScore || settings.get.totalScore || 0);
             })
-            .catch(() => setTotalScore(0));
+            .catch((err) => {
+                console.log(err);
+                // @ts-ignore
+                setTotalScore(settings.get.totalScore || 0);
+            });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userDoc]);
 
     return (

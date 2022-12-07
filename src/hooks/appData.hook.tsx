@@ -5,6 +5,8 @@ import { APP_IDENTIFIER } from "../constants/app.constants";
 import pkg from "../../package.json";
 import { logEvent } from "../helpers/logEvent.helper";
 import { Difficulty, WordLength } from "./game.hook";
+import { isDevMode } from "../helpers/isDevMode.helper";
+import firestore from "@react-native-firebase/firestore";
 
 const STORAGE_NAMES = {
     SETTINGS: `@${APP_IDENTIFIER}:settings`,
@@ -104,7 +106,29 @@ export const AppDataProvider = ({ children }: Props): JSX.Element => {
         auth()
             .signInAnonymously()
             .then(({ user }) => {
-                setUserId(user.uid);
+                firestore()
+                    .collection("users")
+                    .doc(user.uid)
+                    .get()
+                    .then((res) => {
+                        if (!res.data()) {
+                            firestore()
+                                .collection("users")
+                                .doc(user.uid)
+                                .set({
+                                    isDev: isDevMode || undefined,
+                                    createdAt:
+                                        firestore.FieldValue.serverTimestamp(),
+                                })
+                                .then(() => setUserId(user.uid));
+                        } else {
+                            setUserId(user.uid);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        setUserId(user.uid);
+                    });
             })
             .catch((error) => {
                 if (error.code === "auth/operation-not-allowed") {
