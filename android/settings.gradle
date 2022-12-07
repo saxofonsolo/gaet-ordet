@@ -3,6 +3,9 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 includeBuild('../node_modules/react-native-gradle-plugin')
 
+include ':react-native-code-push'
+project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-code-push/android/app')
+
 include ":react-native-config"
 project(":react-native-config").projectDir = new File(rootProject.projectDir, "../node_modules/react-native-config/android")
 
