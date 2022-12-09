@@ -93,7 +93,7 @@ export const SoftKeyboardKey = React.memo(
                         ? COLORS.CYAN
                         : isClose
                         ? COLORS.ORANGE
-                        : isRedundant
+                        : isRedundant && !forbidden
                         ? "#222"
                         : "#333"
                     : isCorrect
@@ -107,11 +107,11 @@ export const SoftKeyboardKey = React.memo(
 
             setTextColor(
                 isDarkMode
-                    ? isRedundant
+                    ? isRedundant && !forbidden
                         ? "#555"
                         : "#DDD"
                     : isRedundant && !forbidden
-                    ? "#999"
+                    ? "#0008"
                     : "#222",
             );
         }, [isClose, isCorrect, isRedundant, isDarkMode, forbidden]);

@@ -137,12 +137,12 @@ export const ScoreProvider = ({ children }: Props): JSX.Element => {
             .then((doc) => {
                 const { totalScore: retrievedScore } = doc.data() as any;
                 // @ts-ignore
-                setTotalScore(retrievedScore || settings.get.totalScore || 0);
+                setTotalScore(retrievedScore || settings.get?.totalScore || 0);
             })
             .catch((err) => {
                 console.log(err);
                 // @ts-ignore
-                setTotalScore(settings.get.totalScore || 0);
+                setTotalScore(settings.get?.totalScore || 0);
             });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userDoc]);

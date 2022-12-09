@@ -6,8 +6,9 @@ import { useAppData } from "../../hooks/appData.hook";
 import { ScoreProvider } from "../../hooks/score.hook";
 import { HomeModalLoserScreen } from "./HomeModalLoser.screen";
 import { HomeMainScreen } from "./HomeMain.screen";
+import { HomeMenuScreen } from "./HomeMenu.component";
 import { HomeModalWinnerScreen } from "./HomeModalWinner.screen";
-import { HomeModalMenuScreen } from "./HomeModalMenu.screen";
+import { HomeModalNewGameScreen } from "./HomeModalNewGame.screen";
 import { HomeModalGiveUpScreen } from "./HomeModalGiveUp.screen";
 
 const Stack = createNativeStackNavigator();
@@ -21,6 +22,17 @@ export const HomeRootScreen = (): JSX.Element => {
                     <Stack.Screen
                         name={SCREEN_NAMES.home.main}
                         component={HomeMainScreen}
+                    />
+                    <Stack.Screen
+                        name={SCREEN_NAMES.home.menu}
+                        component={HomeMenuScreen}
+                        options={{
+                            presentation: "transparentModal",
+                            animation: "fade",
+                            contentStyle: {
+                                backgroundColor: "#000B",
+                            },
+                        }}
                     />
                     <Stack.Group
                         screenOptions={{
@@ -40,8 +52,8 @@ export const HomeRootScreen = (): JSX.Element => {
                             component={HomeModalWinnerScreen}
                         />
                         <Stack.Screen
-                            name={SCREEN_NAMES.home.modalMenu}
-                            component={HomeModalMenuScreen}
+                            name={SCREEN_NAMES.home.modalNewGame}
+                            component={HomeModalNewGameScreen}
                         />
                         <Stack.Screen
                             name={SCREEN_NAMES.home.modalGiveUp}

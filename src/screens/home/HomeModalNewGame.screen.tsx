@@ -14,7 +14,7 @@ import { COLORS } from "../../constants/colors.constants";
 import { DICTIONARY } from "../../constants/dictionary.constants";
 import { Paragraph } from "../../components/elements/Paragraph.component";
 
-export const HomeModalMenuScreen = (): JSX.Element => {
+export const HomeModalNewGameScreen = (): JSX.Element => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { difficulty, wordLength, newGame } = useGame();
     const [newDifficulty, setNewDifficulty] = useState<Difficulty>(difficulty);

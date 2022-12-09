@@ -2,9 +2,10 @@ export const SCREEN_NAMES = {
     home: {
         root: "home root",
         main: "home main",
+        menu: "home menu",
         modalLoser: "home modal loser",
         modalWinner: "home modal winner",
-        modalMenu: "home modal menu",
+        modalNewGame: "home modal new game",
         modalGiveUp: "home modal give up",
     },
     componentLibrary: {

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import { APP_IDENTIFIER } from "../constants/app.constants";
 import pkg from "../../package.json";
 import { logEvent } from "../helpers/logEvent.helper";
-import { Difficulty, WordLength } from "./game.hook";
 import { isDevMode } from "../helpers/isDevMode.helper";
-import firestore from "@react-native-firebase/firestore";
+import { Difficulty, WordLength } from "./game.hook";
 
 const STORAGE_NAMES = {
     SETTINGS: `@${APP_IDENTIFIER}:settings`,
@@ -26,6 +26,8 @@ interface AppDataHook {
         set: (settings: Settings) => Promise<void>;
         clear: () => void;
     };
+    isMenuOpen: boolean;
+    setIsMenuOpen: (state: boolean) => void;
 }
 
 const AppDataContext = React.createContext<AppDataHook>({
@@ -37,6 +39,8 @@ const AppDataContext = React.createContext<AppDataHook>({
         set: () => Promise.reject(),
         clear: () => null,
     },
+    isMenuOpen: false,
+    setIsMenuOpen: () => null,
 });
 
 type Props = {
@@ -44,9 +48,10 @@ type Props = {
 };
 
 export const AppDataProvider = ({ children }: Props): JSX.Element => {
-    const [userId, setUserId] = useState<string>("");
     const [appIsReady, setAppIsReady] = useState(false);
+    const [userId, setUserId] = useState<string>("");
     const [settings, setSettings] = useState<Settings>();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const getSettings = useCallback(async () => {
         try {
@@ -162,6 +167,8 @@ export const AppDataProvider = ({ children }: Props): JSX.Element => {
                     set: storeSettings,
                     clear: clearSettings,
                 },
+                isMenuOpen,
+                setIsMenuOpen,
             }}
         >
             {children}
