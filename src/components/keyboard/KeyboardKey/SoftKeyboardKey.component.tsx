@@ -1,14 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-    Animated,
-    Dimensions,
-    Pressable,
-    Text,
-    useColorScheme,
-    View,
-} from "react-native";
-import { COLORS } from "../../../constants/colors.constants";
+import { Animated, Dimensions, Pressable, Text, View } from "react-native";
 import { FONTS } from "../../../constants/fonts.constants";
+import { useTheme } from "../../../hooks/theme.hook";
 
 interface SoftKeyboardKeyProps {
     value: string;
@@ -33,7 +26,7 @@ export const SoftKeyboardKey = React.memo(
         const [backgroundColor, setBackgroundColor] = useState("#0000");
         const [borderColor, setBorderColor] = useState("#0000");
         const [textColor, setTextColor] = useState("#0000");
-        const isDarkMode = useColorScheme() === "dark";
+        const { colors, isDarkMode } = useTheme();
         const keyWidth = Math.min(
             65,
             (Dimensions.get("window").width - 4) / 11,
@@ -70,51 +63,31 @@ export const SoftKeyboardKey = React.memo(
 
         const setNewColors = useCallback(() => {
             setBackgroundColor(
-                isDarkMode
-                    ? isCorrect
-                        ? COLORS.CYAN_DARKER
-                        : isClose
-                        ? COLORS.ORANGE_DARKER
-                        : isRedundant
-                        ? COLORS.BLACK
-                        : "#222"
-                    : isCorrect
-                    ? COLORS.CYAN
+                isCorrect
+                    ? colors.keyboard.background.correct
                     : isClose
-                    ? COLORS.ORANGE
+                    ? colors.keyboard.background.close
                     : isRedundant
-                    ? COLORS.WHITE
-                    : "#DDD",
+                    ? colors.keyboard.background.redundant
+                    : colors.keyboard.background.default,
             );
 
             setBorderColor(
-                isDarkMode
-                    ? isCorrect
-                        ? COLORS.CYAN
-                        : isClose
-                        ? COLORS.ORANGE
-                        : isRedundant && !forbidden
-                        ? "#222"
-                        : "#333"
-                    : isCorrect
-                    ? COLORS.CYAN_DARK
+                isCorrect
+                    ? colors.keyboard.border.correct
                     : isClose
-                    ? COLORS.ORANGE_DARK
+                    ? colors.keyboard.border.close
                     : isRedundant && !forbidden
-                    ? "#DDD"
-                    : "#CCC",
+                    ? colors.keyboard.border.redundant
+                    : colors.keyboard.border.default,
             );
 
             setTextColor(
-                isDarkMode
-                    ? isRedundant && !forbidden
-                        ? "#555"
-                        : "#DDD"
-                    : isRedundant && !forbidden
-                    ? "#0008"
-                    : "#222",
+                isRedundant && !forbidden
+                    ? colors.keyboard.text.redundant
+                    : colors.keyboard.text.default,
             );
-        }, [isClose, isCorrect, isRedundant, isDarkMode, forbidden]);
+        }, [isClose, isCorrect, isRedundant, forbidden, colors]);
 
         useEffect(() => {
             if (isClose || isCorrect || isRedundant) {

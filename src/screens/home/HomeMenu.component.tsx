@@ -1,11 +1,9 @@
-import React from "react";
-import { Pressable, useColorScheme, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useState } from "react";
+import { Pressable, View } from "react-native";
 import { Header } from "../../components/Header/Header.component";
 import { Paragraph } from "../../components/elements/Paragraph.component";
-import { COLORS } from "../../constants/colors.constants";
-import { SCREEN_NAMES } from "../../constants/screenNames.constants";
+import { NewGame } from "../../components/NewGame/NewGame.component";
+import { useTheme } from "../../hooks/theme.hook";
 
 interface ItemProps {
     text: string;
@@ -17,8 +15,8 @@ const Item = ({ text, value, onPress }: ItemProps) => {
     return (
         <View
             style={{
-                borderBottomWidth: 1,
-                borderBottomColor: "#7f7f7f7f",
+                borderTopWidth: 1,
+                borderTopColor: "#7f7f7f7f",
             }}
         >
             <Pressable
@@ -41,52 +39,52 @@ const Item = ({ text, value, onPress }: ItemProps) => {
 };
 
 export const HomeMenuScreen: React.FC = () => {
-    const { navigate } = useNavigation<NativeStackNavigationProp<any>>();
-    const isDarkMode = useColorScheme() === "dark";
+    const [showNewGame, setShowNewGame] = useState(false);
+    const { colors, colorScheme, setColorScheme } = useTheme();
 
     return (
         <View
             style={{
                 flex: 1,
-                backgroundColor: isDarkMode ? COLORS.BLACK : COLORS.WHITE,
+                backgroundColor: colors.background,
             }}
         >
             <Header />
             <View
                 style={{
-                    borderTopWidth: 1,
-                    borderTopColor: "#7f7f7f7f",
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#7f7f7f7f",
                 }}
             >
                 <Item
                     text="START NYT SPIL"
-                    value={"▶"}
-                    onPress={() =>
-                        navigate({
-                            name: SCREEN_NAMES.home.modalNewGame,
-                            params: {},
-                        })
-                    }
+                    value={showNewGame ? "" : "▶"}
+                    onPress={() => setShowNewGame((state) => !state)}
                 />
+                {showNewGame && <NewGame />}
                 <Item
                     text="FARVESKEMA"
-                    value={isDarkMode ? "MØRKT" : "LYST"}
+                    value={
+                        colorScheme === "dark"
+                            ? "MØRKT"
+                            : colorScheme === "light"
+                            ? "LYST"
+                            : "AUTO"
+                    }
                     onPress={() =>
-                        navigate({
-                            name: SCREEN_NAMES.home.modalNewGame,
-                            params: {},
-                        })
+                        setColorScheme((state) =>
+                            state === "auto"
+                                ? "dark"
+                                : state === "dark"
+                                ? "light"
+                                : "auto",
+                        )
                     }
                 />
                 <Item
                     text="BRUGER"
                     value="OPRET / LOG IND"
-                    onPress={() =>
-                        navigate({
-                            name: SCREEN_NAMES.home.modalNewGame,
-                            params: {},
-                        })
-                    }
+                    onPress={() => setShowNewGame((state) => !state)}
                 />
             </View>
         </View>

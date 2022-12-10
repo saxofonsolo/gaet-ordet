@@ -5,7 +5,6 @@ export const SCREEN_NAMES = {
         menu: "home menu",
         modalLoser: "home modal loser",
         modalWinner: "home modal winner",
-        modalNewGame: "home modal new game",
         modalGiveUp: "home modal give up",
     },
     componentLibrary: {

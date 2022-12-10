@@ -1,7 +1,7 @@
 import React from "react";
-import { StyleProp, Text, TextStyle, useColorScheme } from "react-native";
-import { COLORS } from "../../constants/colors.constants";
+import { StyleProp, Text, TextStyle } from "react-native";
 import { FONTS } from "../../constants/fonts.constants";
+import { useTheme } from "../../hooks/theme.hook";
 
 interface ParagraphProps {
     bold?: boolean;
@@ -26,7 +26,7 @@ export const Paragraph = ({
     style,
     children,
 }: ParagraphProps): JSX.Element => {
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors } = useTheme();
     return (
         <Text
             style={[
@@ -41,7 +41,7 @@ export const Paragraph = ({
                     fontSize: size || 16,
                     textAlign: align || "left",
                     textTransform: uppercase ? "uppercase" : "none",
-                    color: isDarkMode ? COLORS.WHITE : COLORS.BLACK,
+                    color: colors.text,
                     letterSpacing,
                 },
                 style,

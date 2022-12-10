@@ -1,4 +1,4 @@
-import { Pressable, useColorScheme, View } from "react-native";
+import { Pressable, View } from "react-native";
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -7,13 +7,13 @@ import { SCREEN_NAMES } from "../../constants/screenNames.constants";
 import DannebrogSvg from "../../graphics/dannebrog.svg";
 import BurgerSvg from "../../graphics/burger.svg";
 import CloseSvg from "../../graphics/close.svg";
-import { COLORS } from "../../constants/colors.constants";
 import { useAppData } from "../../hooks/appData.hook";
+import { useTheme } from "../../hooks/theme.hook";
 
 export const Header: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const isDarkMode = useColorScheme() === "dark";
     const { isMenuOpen, setIsMenuOpen } = useAppData();
+    const { colors } = useTheme();
 
     const toggleMenu = useCallback(() => {
         if (isMenuOpen) {
@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
             style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                backgroundColor: isDarkMode ? COLORS.BLACK : COLORS.WHITE,
+                backgroundColor: colors.background,
             }}
         >
             <View style={{ flexDirection: "row", width: 60 }} />

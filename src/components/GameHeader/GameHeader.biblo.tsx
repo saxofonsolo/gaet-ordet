@@ -14,7 +14,7 @@ export default {
         onGiveUp: () => null,
     },
     wrapperStyle: {
-        marginHorizontal: 0,
+        paddingHorizontal: 0,
     },
 } as BibloBio<Props>;
 

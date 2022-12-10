@@ -1,18 +1,18 @@
 import React, { useCallback } from "react";
-import { Pressable, Text, useColorScheme, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useGame } from "../../hooks/game.hook";
 import { Button, ButtonType } from "../../components/elements/Button.component";
-import { COLORS } from "../../constants/colors.constants";
 import { DICTIONARY } from "../../constants/dictionary.constants";
 import { SCREEN_NAMES } from "../../constants/screenNames.constants";
 import { Paragraph } from "../../components/elements/Paragraph.component";
+import { useTheme } from "../../hooks/theme.hook";
 
 export const HomeModalGiveUpScreen = (): JSX.Element => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { giveUp } = useGame();
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors } = useTheme();
 
     const onPressNo = useCallback(() => {
         navigation.goBack();
@@ -45,7 +45,7 @@ export const HomeModalGiveUpScreen = (): JSX.Element => {
             <View
                 style={{
                     position: "relative",
-                    backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
+                    backgroundColor: colors.modal,
                     width: 320,
                     borderRadius: 5,
                 }}
@@ -55,7 +55,7 @@ export const HomeModalGiveUpScreen = (): JSX.Element => {
                         position: "absolute",
                         top: 0,
                         left: "50%",
-                        backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
+                        backgroundColor: colors.modal,
                         width: 100,
                         height: 100,
                         borderRadius: 50,

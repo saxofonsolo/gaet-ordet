@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useColorScheme, View } from "react-native";
+import { View } from "react-native";
 import { useScore } from "../hooks/score.hook";
 import { GameState, useGame } from "../hooks/game.hook";
 import CoinSvg from "../graphics/coin.svg";
@@ -7,6 +7,7 @@ import { COLORS } from "../constants/colors.constants";
 import { formatNumber } from "../helpers/formatNumber.helper";
 import { DICTIONARY } from "../constants/dictionary.constants";
 import { WORD_GUESS_COUNT } from "../constants/game.constants";
+import { useTheme } from "../hooks/theme.hook";
 import { Paragraph } from "./elements/Paragraph.component";
 
 export const ScoreCalculation = (): JSX.Element => {
@@ -28,7 +29,7 @@ export const ScoreCalculation = (): JSX.Element => {
     } = useScore();
     const scoreBefore = useRef(score).current;
     const totalScoreBefore = useRef(totalScore).current;
-    const isDarkMode = useColorScheme() === "dark";
+    const { isDarkMode } = useTheme();
 
     const timeBonus = useRef(
         gameState === GameState.Won

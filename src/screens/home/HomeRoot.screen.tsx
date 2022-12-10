@@ -8,7 +8,6 @@ import { HomeModalLoserScreen } from "./HomeModalLoser.screen";
 import { HomeMainScreen } from "./HomeMain.screen";
 import { HomeMenuScreen } from "./HomeMenu.component";
 import { HomeModalWinnerScreen } from "./HomeModalWinner.screen";
-import { HomeModalNewGameScreen } from "./HomeModalNewGame.screen";
 import { HomeModalGiveUpScreen } from "./HomeModalGiveUp.screen";
 
 const Stack = createNativeStackNavigator();
@@ -50,10 +49,6 @@ export const HomeRootScreen = (): JSX.Element => {
                         <Stack.Screen
                             name={SCREEN_NAMES.home.modalWinner}
                             component={HomeModalWinnerScreen}
-                        />
-                        <Stack.Screen
-                            name={SCREEN_NAMES.home.modalNewGame}
-                            component={HomeModalNewGameScreen}
                         />
                         <Stack.Screen
                             name={SCREEN_NAMES.home.modalGiveUp}

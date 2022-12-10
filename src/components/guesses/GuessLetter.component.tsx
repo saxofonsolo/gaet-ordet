@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Pressable, Text, useColorScheme } from "react-native";
-import { COLORS } from "../../constants/colors.constants";
+import { Animated, Pressable, Text } from "react-native";
 import { FONTS } from "../../constants/fonts.constants";
+import { useTheme } from "../../hooks/theme.hook";
 
 interface GuessLetterProps {
     letter: string;
@@ -32,53 +32,37 @@ export const GuessLetter = React.memo(
         const [backgroundColor, setBackgroundColor] = useState("#0000");
         const [borderColor, setBorderColor] = useState("#0000");
         const [textColor, setTextColor] = useState("#0000");
-        const isDarkMode = useColorScheme() === "dark";
+        const { colors } = useTheme();
         const scaleX = useRef(new Animated.Value(1)).current;
         const scaleY = useRef(new Animated.Value(1)).current;
 
         const setNewColors = useCallback(() => {
             setBackgroundColor(
-                isDarkMode
-                    ? isCorrect
-                        ? COLORS.CYAN_DARKER
-                        : isClose
-                        ? COLORS.ORANGE_DARKER
-                        : isRedundant
-                        ? "#222"
-                        : "#070707"
-                    : isCorrect
-                    ? COLORS.CYAN
+                isCorrect
+                    ? colors.letter.background.correct
                     : isClose
-                    ? COLORS.ORANGE
+                    ? colors.letter.background.close
                     : isRedundant
-                    ? "#DDD"
-                    : COLORS.WHITE,
+                    ? colors.letter.background.redundant
+                    : colors.letter.background.default,
             );
 
             setBorderColor(
-                isDarkMode
-                    ? isCorrect || (previouslyGuessed && isCurrent)
-                        ? COLORS.CYAN
-                        : isClose
-                        ? COLORS.ORANGE
-                        : isRedundant
-                        ? "#2220"
-                        : isCurrent
-                        ? "#777"
-                        : "#333"
-                    : isCorrect || (previouslyGuessed && isCurrent)
-                    ? COLORS.CYAN_DARK
+                isCorrect || (previouslyGuessed && isCurrent)
+                    ? colors.letter.border.correct
                     : isClose
-                    ? COLORS.ORANGE_DARK
+                    ? colors.letter.border.close
                     : isRedundant
-                    ? "#DDD0"
+                    ? colors.letter.border.redundant
                     : isCurrent
-                    ? "#888"
-                    : "#CCC",
+                    ? colors.letter.border.current
+                    : colors.letter.border.default,
             );
 
             setTextColor(
-                isInEditMode ? "#7f7f7f" : isDarkMode ? "#EEE" : "#111",
+                isInEditMode
+                    ? colors.letter.text.editMode
+                    : colors.letter.text.default,
             );
         }, [
             isClose,
@@ -86,8 +70,8 @@ export const GuessLetter = React.memo(
             isRedundant,
             previouslyGuessed,
             isCurrent,
-            isDarkMode,
             isInEditMode,
+            colors,
         ]);
 
         useEffect(() => {
@@ -112,7 +96,7 @@ export const GuessLetter = React.memo(
             isClose,
             isCorrect,
             isRedundant,
-            isDarkMode,
+            colors,
             setNewColors,
             letterIndex,
             scaleY,
@@ -121,16 +105,12 @@ export const GuessLetter = React.memo(
         useEffect(() => {
             if (isCurrent) {
                 setBorderColor(
-                    isDarkMode
-                        ? isInEditMode
-                            ? COLORS.PINK
-                            : "#777"
-                        : isInEditMode
-                        ? COLORS.PINK_DARK
-                        : "#888",
+                    isInEditMode
+                        ? colors.letter.border.editMode
+                        : colors.letter.border.current,
                 );
             }
-        }, [isCurrent, isInEditMode, isDarkMode]);
+        }, [isCurrent, isInEditMode, colors]);
 
         useEffect(() => {
             if (letter) {

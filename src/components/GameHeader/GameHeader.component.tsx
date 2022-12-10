@@ -1,9 +1,10 @@
 import React from "react";
-import { Pressable, useColorScheme, View } from "react-native";
+import { Pressable, View } from "react-native";
 import CoinSvg from "../../graphics/coin.svg";
 import { DICTIONARY } from "../../constants/dictionary.constants";
 import { Paragraph } from "../elements/Paragraph.component";
 import { formatNumber } from "../../helpers/formatNumber.helper";
+import { useTheme } from "../../hooks/theme.hook";
 
 interface GameHeaderProps {
     score: number;
@@ -13,14 +14,14 @@ interface GameHeaderProps {
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = (props) => {
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors } = useTheme();
 
     return (
         <View
             style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                backgroundColor: isDarkMode ? "#171717" : "#eee",
+                backgroundColor: colors.surface,
             }}
         >
             <View

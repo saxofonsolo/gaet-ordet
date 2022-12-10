@@ -29,7 +29,6 @@ export const DICTIONARY = (replace: Record<string, string | number> = {}) => {
                 tryAgain: "PRØV IGEN",
                 theWordWas: "ORDET VAR",
             },
-            new: "NYT SPIL",
             start: "START SPIL",
             giveUp: {
                 title: "OPGIV",

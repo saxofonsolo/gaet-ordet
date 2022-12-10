@@ -1,11 +1,5 @@
 import React, { useEffect } from "react";
-import {
-    Platform,
-    SafeAreaView,
-    UIManager,
-    useColorScheme,
-    View,
-} from "react-native";
+import { Platform, SafeAreaView, UIManager, View } from "react-native";
 import codePush from "react-native-code-push";
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import { NavigationContainer } from "@react-navigation/native";
@@ -19,6 +13,7 @@ import { AppDataProvider } from "./hooks/appData.hook";
 import { ComponentsRootScreen } from "./screens/components/ComponentsRoot.screen";
 import { SyncModal } from "./components/SyncModal.component";
 import { isDevMode } from "./helpers/isDevMode.helper";
+import { ThemeProvider, useTheme } from "./hooks/theme.hook";
 
 if (
     Platform.OS === "android" &&
@@ -30,7 +25,7 @@ if (
 const Stack = createNativeStackNavigator();
 
 const AppContent = (): JSX.Element => {
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors, isDarkMode } = useTheme();
 
     useEffect(() => {
         void SystemNavigationBar.stickyImmersive();
@@ -39,7 +34,7 @@ const AppContent = (): JSX.Element => {
     return (
         <SafeAreaView
             style={{
-                backgroundColor: isDarkMode ? COLORS.BLACK : COLORS.WHITE,
+                backgroundColor: colors.background,
             }}
         >
             <AppDataProvider>
@@ -61,7 +56,13 @@ const AppContent = (): JSX.Element => {
                 >
                     <View style={{ height: "100%" }}>
                         <NavigationContainer>
-                            <Stack.Navigator>
+                            <Stack.Navigator
+                                screenOptions={{
+                                    contentStyle: {
+                                        backgroundColor: colors.background,
+                                    },
+                                }}
+                            >
                                 <Stack.Screen
                                     name={SCREEN_NAMES.home.root}
                                     component={HomeRootScreen}
@@ -126,12 +127,12 @@ class AppComponent extends React.Component {
 
     render() {
         return (
-            <>
+            <ThemeProvider>
                 <AppContent />
                 {this.state.checkSync && this.state.syncProgress > 0 && (
                     <SyncModal downloadProgress={this.state.syncProgress} />
                 )}
-            </>
+            </ThemeProvider>
         );
     }
 }

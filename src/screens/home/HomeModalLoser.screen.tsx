@@ -1,22 +1,15 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import {
-    Animated,
-    Dimensions,
-    Easing,
-    Text,
-    useColorScheme,
-    View,
-} from "react-native";
+import { Animated, Dimensions, Easing, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { GameState, useGame } from "../../hooks/game.hook";
 import { Button } from "../../components/elements/Button.component";
-import { COLORS } from "../../constants/colors.constants";
 import { DICTIONARY } from "../../constants/dictionary.constants";
 import { ScoreCalculation } from "../../components/ScoreCalculation.component";
 import { Paragraph } from "../../components/elements/Paragraph.component";
 import { WORD_GUESS_COUNT } from "../../constants/game.constants";
 import { logEvent } from "../../helpers/logEvent.helper";
+import { useTheme } from "../../hooks/theme.hook";
 
 export const HomeModalLoserScreen = (): JSX.Element => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -39,7 +32,7 @@ export const HomeModalLoserScreen = (): JSX.Element => {
         inputRange: [0, 1900, 2000],
         outputRange: [0.99, 0.99, 0],
     });
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors } = useTheme();
     const emoji = useRef(
         gameState === GameState.GaveUp
             ? "🙃"
@@ -122,7 +115,7 @@ export const HomeModalLoserScreen = (): JSX.Element => {
             <View
                 style={{
                     position: "relative",
-                    backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
+                    backgroundColor: colors.modal,
                     width: 320,
                     borderRadius: 5,
                 }}
@@ -132,7 +125,7 @@ export const HomeModalLoserScreen = (): JSX.Element => {
                         position: "absolute",
                         top: 0,
                         left: "50%",
-                        backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
+                        backgroundColor: colors.modal,
                         width: 100,
                         height: 100,
                         borderRadius: 50,

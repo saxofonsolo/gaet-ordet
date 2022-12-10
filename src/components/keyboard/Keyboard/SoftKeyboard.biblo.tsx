@@ -12,7 +12,7 @@ export default {
         onPress: () => null,
     },
     wrapperStyle: {
-        marginHorizontal: 0,
+        paddingHorizontal: 0,
     },
 } as BibloBio<Props>;
 

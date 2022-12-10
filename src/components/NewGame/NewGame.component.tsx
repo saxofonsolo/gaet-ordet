@@ -1,25 +1,26 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Pressable, Text, useColorScheme, View } from "react-native";
+import { Animated, Text, View } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { COLORS } from "../../constants/colors.constants";
 import {
     Difficulty,
     GameOptions,
     useGame,
     WordLength,
 } from "../../hooks/game.hook";
-import { Button } from "../../components/elements/Button.component";
-import { COLORS } from "../../constants/colors.constants";
+import { Paragraph } from "../elements/Paragraph.component";
 import { DICTIONARY } from "../../constants/dictionary.constants";
-import { Paragraph } from "../../components/elements/Paragraph.component";
+import { Button } from "../elements/Button.component";
+import { useTheme } from "../../hooks/theme.hook";
 
-export const HomeModalNewGameScreen = (): JSX.Element => {
+export const NewGame: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { difficulty, wordLength, newGame } = useGame();
     const [newDifficulty, setNewDifficulty] = useState<Difficulty>(difficulty);
     const [newWordLength, setNewWordLength] = useState<WordLength>(wordLength);
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors } = useTheme();
     const emojiScale = useRef(new Animated.Value(1));
     const firstRender = useRef(true);
 
@@ -45,45 +46,20 @@ export const HomeModalNewGameScreen = (): JSX.Element => {
     }, [newDifficulty, newWordLength]);
 
     return (
-        <View
-            style={{
-                height: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-        >
-            <Pressable
-                onPress={() => navigation.goBack()}
-                accessibilityRole="button"
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                }}
-            />
-
+        <View style={{ alignItems: "center" }}>
             <View
                 style={{
                     position: "relative",
-                    backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
                     width: 320,
                     borderRadius: 5,
                 }}
             >
                 <View
                     style={{
-                        position: "absolute",
-                        top: 0,
-                        left: "50%",
-                        backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
-                        width: 100,
-                        height: 100,
+                        height: 80,
                         borderRadius: 50,
                         justifyContent: "center",
                         alignItems: "center",
-                        transform: [{ translateX: -50 }, { translateY: -50 }],
                     }}
                 >
                     <Animated.View
@@ -126,15 +102,10 @@ export const HomeModalNewGameScreen = (): JSX.Element => {
 
                 <View
                     style={{
-                        paddingTop: 50,
                         paddingBottom: 20,
                         paddingHorizontal: 20,
                     }}
                 >
-                    <Paragraph black align="center" size={30}>
-                        {DICTIONARY().game.new}
-                    </Paragraph>
-
                     <View style={{ marginBottom: 20 }}>
                         <Slider
                             style={{
@@ -159,9 +130,7 @@ export const HomeModalNewGameScreen = (): JSX.Element => {
                                     ? COLORS.ORANGE
                                     : COLORS.PINK
                             }
-                            maximumTrackTintColor={
-                                isDarkMode ? COLORS.WHITE : "#777"
-                            }
+                            maximumTrackTintColor={colors.sliderTrack}
                             tapToSeek
                             onValueChange={(value) => setNewWordLength(value)}
                             onSlidingComplete={(value) =>
@@ -245,9 +214,7 @@ export const HomeModalNewGameScreen = (): JSX.Element => {
                                     ? COLORS.ORANGE
                                     : COLORS.PINK
                             }
-                            maximumTrackTintColor={
-                                isDarkMode ? COLORS.WHITE : "#777"
-                            }
+                            maximumTrackTintColor={colors.sliderTrack}
                             tapToSeek={true}
                             onValueChange={(value) => setNewDifficulty(value)}
                             onSlidingComplete={(value) =>

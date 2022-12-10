@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { Animated, Easing, Text, useColorScheme, View } from "react-native";
+import { Animated, Easing, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useGame } from "../../hooks/game.hook";
 import { Button } from "../../components/elements/Button.component";
-import { COLORS } from "../../constants/colors.constants";
 import { WORD_GUESS_COUNT } from "../../constants/game.constants";
 import { DICTIONARY } from "../../constants/dictionary.constants";
 import { ScoreCalculation } from "../../components/ScoreCalculation.component";
 import { Paragraph } from "../../components/elements/Paragraph.component";
 import { logEvent } from "../../helpers/logEvent.helper";
+import { useTheme } from "../../hooks/theme.hook";
 
 export const HomeModalWinnerScreen = (): JSX.Element => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -26,7 +26,7 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
         inputRange: [0, 1100, 1200],
         outputRange: [1, 1, 0],
     });
-    const isDarkMode = useColorScheme() === "dark";
+    const { colors } = useTheme();
 
     const onPressNewGame = useCallback(() => {
         newGame().then(() => navigation.goBack());
@@ -103,7 +103,7 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
             <View
                 style={{
                     position: "relative",
-                    backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
+                    backgroundColor: colors.modal,
                     width: 320,
                     borderRadius: 5,
                 }}
@@ -113,7 +113,7 @@ export const HomeModalWinnerScreen = (): JSX.Element => {
                         position: "absolute",
                         top: 0,
                         left: "50%",
-                        backgroundColor: isDarkMode ? "#222" : COLORS.WHITE,
+                        backgroundColor: colors.modal,
                         width: 100,
                         height: 100,
                         borderRadius: 50,
