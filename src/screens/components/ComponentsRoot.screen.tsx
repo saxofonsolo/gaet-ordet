@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SCREEN_NAMES } from "../../constants/screenNames.constants";
 import { useAppData } from "../../hooks/appData.hook";
 import { useTheme } from "../../hooks/theme.hook";
+import { FONTS } from "../../constants/fonts.constants";
 import { ComponentsReaderScreen } from "./ComponentsReader.screen";
 
 const components = bibloImporter(
@@ -39,6 +40,7 @@ export const ComponentsRootScreen: React.FC = () => {
                 headerStyle: {
                     backgroundColor: colors.background,
                 },
+                headerSearchPlaceholder: "Søg",
                 sectionHeaderStyle: {
                     backgroundColor: colors.surface,
                 },
@@ -46,6 +48,14 @@ export const ComponentsRootScreen: React.FC = () => {
             readerOptions={{
                 headerTagsHidden: true,
                 headerPathHidden: true,
+                headerTitleTextStyle: {
+                    fontFamily: FONTS.BLACK,
+                    fontWeight: "normal",
+                },
+                itemTitleTextStyle: {
+                    fontFamily: FONTS.BOLD,
+                    fontWeight: "normal",
+                },
                 wrapperStyle: { backgroundColor: colors.background },
             }}
         >
